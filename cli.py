@@ -78,6 +78,39 @@ def get_git_commits(n):
         print(f"Error fetching git commits: {e}")
         sys.exit(1)
 
+def preprocess_commits(commits, max_commits=50):
+    """Preprocess and potentially filter/group commits for better changelog generation."""
+    if len(commits) > max_commits:
+        # If too many commits, focus on the more significant ones
+        # Strategy: keep commits with longer messages, filter out obvious typo fixes
+        
+        # Score commits by message length and keywords
+        scored_commits = []
+        for commit in commits:
+            score = len(commit['subject'] + commit['body'])
+            
+            # Boost score for important keywords
+            keywords = ['add', 'added', 'feature', 'featured', 'improve', 'improved', 'fix', 'fixed', 'implement', 'implemented', 'update', 'updated', 'updates', 'support', 'supported', 'refactor', 'refactored']
+            lowered = (commit['subject'] + commit['body']).lower()
+            
+            for keyword in keywords:
+                if keyword in lowered:
+                    score += 10
+                    
+            # Reduce score for trivial changes
+            trivial = ['typo', 'whitespace', 'comment', 'formatting', 'format', 'spacing', 'linting']
+            for word in trivial:
+                if word in lowered:
+                    score -= 15
+                    
+            scored_commits.append((score, commit))
+        
+        # Sort by score and take top max_commits
+        scored_commits.sort(reverse=True)
+        return [commit for _, commit in scored_commits[:max_commits]]
+    
+    return commits
+
 def generate_changelog_with_claude(commits):
     """Generate a changelog using the Claude API."""
     # Create a prompt for Claude
@@ -209,6 +242,7 @@ def main():
         sys.exit(0)
     
     print(f"Found {len(commits)} commits. Generating changelog...")
+    commits = preprocess_commits(commits)
     changelog = generate_changelog_with_claude(commits)
     
     print("\n===== CHANGELOG =====\n")
