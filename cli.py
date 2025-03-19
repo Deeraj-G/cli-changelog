@@ -128,11 +128,18 @@ def generate_changelog_with_claude(commits):
             ### INSTRUCTIONS ###
             Create a professional changelog based on the git commits below. Your task is to analyze these commits and produce a well-organized, user-friendly changelog that follows the style of leading tech companies like Mintlify and Vercel.
 
+            ### KEY CHALLENGES ###
+            - You will receive potentially many small, incremental commits
+            - Some commits may be trivial (typo fixes, minor adjustments) and should be aggregated
+            - Technical implementation details should be translated into user benefits
+            - Similar changes across multiple commits should be consolidated
+
             ### REQUIREMENTS ###
             1. Start with a clear heading that includes the month and year (e.g., "March 2025")
             2. Group changes into relevant categories such as:
                - New Features
                - Improvements
+               - API Improvements
                - Bug Fixes
                - Performance
                - Documentation
@@ -147,16 +154,21 @@ def generate_changelog_with_claude(commits):
             - Use bullet points with clear, concise descriptions
             - Bold key terms or feature names for emphasis
             - Keep descriptions brief but informative
-            - For major features, include a "Learn more" link placeholder
+            - For major features, include a brief description of user benefits
+            
+            ### RESPONSE FORMAT ###
+            IMPORTANT: Your response must ONLY contain the raw markdown content with no additional commentary, introduction, or explanation.
+            Do not include phrases like "Here's the changelog" or "Based on the commits provided".
+            Do not wrap the content in markdown code blocks.
+            The first line of your response should be the main heading (e.g., "# March 2025") and nothing else before it.
             
             ### COMMIT DETAILS ###
             {commit_details}
             
             ### OUTPUT EXAMPLE ###
-            ```markdown
             # March 2025
 
-            ## New Configuration Schema `docs.json`
+            ## New Configuration Schema
 
             We've introduced a new `docs.json` schema as a replacement for `mint.json`, to support better multi-level versioning, easier visual comprehension, and more consistent terminology.
 
@@ -173,11 +185,11 @@ def generate_changelog_with_claude(commits):
 
             ## Quality Improvements
 
-            * Support for requiring authentication to access preview deployments
-            * Improved mobile responsiveness across all documentation pages
-            ```
+            * Added authentication requirement for preview deployments
+            * Improved responsiveness across all documentation pages
             
-            Your changelog should follow this style but with appropriate content based on the commit details provided.
+            ### NOTE ###
+            The generated changelog should follow this style but with appropriate content based on the commit details provided. Remember, provide ONLY the raw markdown content in your response.
             """
 
     # Prepare the API request
