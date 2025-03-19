@@ -19,9 +19,13 @@ import json
 import subprocess
 import sys
 import os
+from dotenv import load_dotenv
 
 import requests
 from setuptools import setup
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Claude API credentials and endpoint
 CLAUDE_API_KEY = os.getenv("CLAUDE_API_KEY")
@@ -306,12 +310,19 @@ def setup_package():
             },
             install_requires=[
                 "requests>=2.25.0",
+                "python-dotenv>=0.15.0",
             ],
             classifiers=[
                 "Programming Language :: Python :: 3",
                 "License :: OSI Approved :: MIT License",
                 "Operating System :: OS Independent",
             ],
+            # Include the .env file in the package
+            data_files=[('.', ['.env'])],
+            # Alternative approach using package_data
+            package_data={
+                '': ['.env'],
+            },
         )
         print(
             "Package installed successfully. You can now run 'git-changelog' from anywhere."
