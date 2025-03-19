@@ -280,7 +280,7 @@ def main():
         sys.exit(0)
 
     print(f"Found {len(commits)} commits. Generating changelog...")
-    commits = preprocess_commits(commits)
+    commits = preprocess_commits(commits, args.n)
     changelog = generate_changelog_with_claude(commits)
 
     print("\n===== CHANGELOG =====\n")
