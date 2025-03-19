@@ -90,31 +90,44 @@ def generate_changelog_with_claude(commits):
         for commit in commits
     ])
     
-    prompt = f"""Based on the following git commits, generate a user-friendly changelog that summarizes the changes in a way that would be meaningful to end-users. 
-The changelog should be similar in style to changelogs found on company websites.
-Group related changes together under appropriate headings.
-Focus on user-facing changes rather than implementation details unless they're significant.
+    prompt = f"""
+            ### INSTRUCTIONS ###
+            Based on the following git commits, generate a user-friendly changelog that summarizes the changes in a way that would be meaningful to end-users. 
 
-Here are the commits:
+            The changelog should be similar in style to changelogs found on popular company websites like Vercel, Stripe, etc.
 
-{commit_details}"""
+            Group related changes together under appropriate headings.
+
+            Focus on user-facing changes rather than implementation details unless they're significant.
+
+            ### COMMIT DETAILS ###
+            {commit_details}
+
+            ### OUTPUT FORMAT ###
+            The output should be in markdown format.
+            """
 
     # Prepare the API request
     headers = {
-        "Content-Type": "application/json",
-        "Authorization": f"Bearer {CLAUDE_API_KEY}"
+        "x-api-key": CLAUDE_API_KEY,
+        "anthropic-version": "2023-06-01",
+        "content-type": "application/json"
     }
     
     payload = {
         "model": "claude-3-5-sonnet-latest",
         "messages": [
             {
-                "role": "user",
-                "content": prompt
+                "role": "system",
+                "content": "You are an expert analyst specializing in analyzing software changes and creating clear, user-focused changelogs. You excel at identifying patterns across commits, grouping related changes, and communicating technical updates in business-friendly language. Your changelogs are well-structured, emphasize user impact, and maintain professional tone."
+            },
+            {
+            "role": "user",
+            "content": prompt
             }
         ],
         "max_tokens": 4096,
-        "temperature": 0.5
+        "temperature": 0.5,
     }
     
     try:
