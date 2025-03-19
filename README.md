@@ -25,6 +25,7 @@ This tool analyzes git commits in your repository and uses Claude AI to generate
 - Git
 - Required Python packages:
   - requests>=2.25.0
+  - python-dotenv>=0.15.0
   - setuptools (for installation)
 
 ### Tips for Best Results
@@ -50,6 +51,7 @@ This tool analyzes git commits in your repository and uses Claude AI to generate
   - `generate_changelog_with_claude()`: Interfaces with Claude AI API
   - `main()`: Orchestrates the overall process
   - `setup_package()`: Handles package installation
+- `.env`: Contains environment variables for API credentials
 
 ## Package Installation
 
@@ -58,6 +60,10 @@ This tool analyzes git commits in your repository and uses Claude AI to generate
 ```bash
 # Navigate to the repository directory
 cd cli-changelog
+
+# Create a .env file with your credentials
+echo 'CLAUDE_API_KEY="your-api-key-here"
+ANTHROPIC_PROXY="your-endpoint-here"' > .env
 
 # Install using the built-in command
 python src/cli.py install
@@ -68,6 +74,10 @@ python src/cli.py install
 ```bash
 # Navigate to the repository directory
 cd cli-changelog
+
+# Create a .env file with your credentials
+echo 'CLAUDE_API_KEY="your-api-key-here"
+ANTHROPIC_PROXY="your-endpoint-here"' > .env
 
 # Create a setup.py file
 echo 'from setuptools import setup, find_packages
@@ -82,7 +92,8 @@ setup(
             "git-changelog=src.cli:main",
         ],
     },
-    install_requires=["requests>=2.25.0"],
+    install_requires=["requests>=2.25.0", "python-dotenv>=0.15.0"],
+    data_files=[(".", [".env"])],
 )' > setup.py
 
 # Install the package
@@ -97,6 +108,9 @@ chmod +x src/cli.py
 
 # Create a symlink in a directory in your PATH
 ln -s "$(pwd)/src/cli.py" ~/.local/bin/git-changelog
+
+# Copy the .env file to the same directory
+cp .env ~/.local/bin/
 
 # Add ~/.local/bin to PATH if not already there
 echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc  # or ~/.zshrc
@@ -117,10 +131,10 @@ git-changelog 20
 
 ## Security Considerations
 
-The API key is currently hardcoded in the script. For improved security:
+This package now uses environment variables from the `.env` file for API credentials, which is more secure than hardcoding them. However:
 
-1. Consider using environment variables instead
-2. Do not share your API key
+1. Do not commit your `.env` file to public repositories
+2. Ensure your `.env` file has restrictive permissions (chmod 600 .env)
 3. Be mindful of commit data sent to the API
 
 ## License
