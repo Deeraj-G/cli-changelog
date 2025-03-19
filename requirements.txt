@@ -1,3 +1,4 @@
 argparse
 requests
 setuptools
+python-dotenv
