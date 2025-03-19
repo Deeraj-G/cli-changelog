@@ -1,11 +1,18 @@
 """
 Generates a changelog for the last n commits of a git repository using the Claude API.
 
-Usage:
-    python3 cli.py <number_of_commits>
+Usage as a script:
+    python cli.py <number_of_commits>
 
-Example:
-    python3 cli.py 10
+Installation as a package:
+    python cli.py install
+
+After installation, use as:
+    git-changelog <number_of_commits>
+
+Examples:
+    python cli.py 10
+    git-changelog 10 --format text
 """
 
 import argparse
@@ -285,11 +292,12 @@ def main():
 def setup_package():
     """Set up the package for installation."""
     try:
-
         setup(
             name="git-changelog",
             version="0.1.0",
             description="Generate changelogs from git commits using Claude AI",
+            author="Deeraj Gurram",
+            author_email="djgurram@gmail.com",
             py_modules=["cli"],
             entry_points={
                 "console_scripts": [
@@ -299,11 +307,15 @@ def setup_package():
             install_requires=[
                 "requests>=2.25.0",
             ],
+            classifiers=[
+                "Programming Language :: Python :: 3",
+                "License :: OSI Approved :: MIT License",
+                "Operating System :: OS Independent",
+            ],
         )
+        print("Package installed successfully. You can now run 'git-changelog' from anywhere.")
     except ImportError:
-        print(
-            "setuptools not found. Run 'pip install setuptools' to enable package installation."
-        )
+        print("setuptools not found. Run 'pip install setuptools' to enable package installation.")
 
 
 if __name__ == "__main__":
