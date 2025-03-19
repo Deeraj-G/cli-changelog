@@ -13,10 +13,10 @@ import subprocess
 import argparse
 import requests
 
+
 # Claude API credentials and endpoint
 CLAUDE_API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRqZ3VycmFtQGdtYWlsLmNvbSIsImFzc2Vzc21lbnQiOiJhaSIsImNyZWF0ZWRfYXQiOiIyMDI1LTAzLTE5VDAxOjU3OjM3LjAzNjI5ODA3NVoiLCJpYXQiOjE3NDIzNDk0NTd9.fgjvGkXDqiExxbBcZmeZm-XjT0kjZScfZN7HQ_1A-ZI"
-BASE_URL = "https://mintlify-take-home.com"
-API_ENDPOINT = f"{BASE_URL}/api/message"
+API_PROXY = "https://mintlify-take-home.com/api/message"
 
 def parse_args():
     """Parse command line arguments."""
@@ -104,7 +104,7 @@ def generate_changelog_with_claude(commits):
             {commit_details}
 
             ### OUTPUT FORMAT ###
-            The output should be in markdown format.
+            The output should be in markdown (.md) format.
             """
 
     # Prepare the API request
@@ -116,14 +116,11 @@ def generate_changelog_with_claude(commits):
     
     payload = {
         "model": "claude-3-5-sonnet-latest",
+        "system": "You are an expert analyst specializing in analyzing software changes and creating clear, user-focused changelogs. You excel at identifying patterns across commits, grouping related changes, and communicating technical updates in business-friendly language. Your changelogs are well-structured, emphasize user impact, and maintain professional tone.",
         "messages": [
             {
-                "role": "system",
-                "content": "You are an expert analyst specializing in analyzing software changes and creating clear, user-focused changelogs. You excel at identifying patterns across commits, grouping related changes, and communicating technical updates in business-friendly language. Your changelogs are well-structured, emphasize user impact, and maintain professional tone."
-            },
-            {
-            "role": "user",
-            "content": prompt
+                "role": "user",
+                "content": prompt
             }
         ],
         "max_tokens": 4096,
@@ -131,16 +128,23 @@ def generate_changelog_with_claude(commits):
     }
     
     try:
-        response = requests.post(API_ENDPOINT, json=payload, headers=headers, timeout=10)
-        response.raise_for_status()  # Raise an exception for HTTP errors
+        response = requests.post(API_PROXY, json=payload, headers=headers, timeout=10)
+        
+        # Don't raise_for_status yet so we can see the error response
+        if response.status_code >= 400:
+            print(f"Error response body: {response.text}")
+            response.raise_for_status()  # Now raise the exception
         
         # Parse the JSON response
         result = response.json()
         
         # Extract the generated changelog from the response
-        # The structure may vary based on the actual API response format
         if "content" in result:
-            return result["content"]
+            # Remove any escape sequences (like \n) and return the raw markdown
+            changelog_content = result["content"][0]["text"]
+            # Convert escaped newlines to actual newlines if needed
+            changelog_content = changelog_content.replace('\\n', '\n')
+            return changelog_content
         else:
             print("Unexpected API response format. Could not extract changelog.")
             print(f"Response: {json.dumps(result, indent=2)}")
