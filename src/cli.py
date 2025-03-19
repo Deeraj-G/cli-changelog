@@ -18,13 +18,14 @@ import argparse
 import json
 import subprocess
 import sys
+import os
 
 import requests
 from setuptools import setup
 
 # Claude API credentials and endpoint
-CLAUDE_API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRqZ3VycmFtQGdtYWlsLmNvbSIsImFzc2Vzc21lbnQiOiJhaSIsImNyZWF0ZWRfYXQiOiIyMDI1LTAzLTE5VDAxOjU3OjM3LjAzNjI5ODA3NVoiLCJpYXQiOjE3NDIzNDk0NTd9.fgjvGkXDqiExxbBcZmeZm-XjT0kjZScfZN7HQ_1A-ZI"
-ANTHROPIC_PROXY = "https://mintlify-take-home.com/api/message"
+CLAUDE_API_KEY = os.getenv("CLAUDE_API_KEY")
+ANTHROPIC_PROXY = os.getenv("ANTHROPIC_PROXY")
 
 
 def parse_args():
