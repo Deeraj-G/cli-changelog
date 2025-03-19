@@ -12,7 +12,6 @@ After installation, use as:
 
 Examples:
     python cli.py 10
-    git-changelog 10 --format text
 """
 
 import argparse
@@ -313,9 +312,13 @@ def setup_package():
                 "Operating System :: OS Independent",
             ],
         )
-        print("Package installed successfully. You can now run 'git-changelog' from anywhere.")
+        print(
+            "Package installed successfully. You can now run 'git-changelog' from anywhere."
+        )
     except ImportError:
-        print("setuptools not found. Run 'pip install setuptools' to enable package installation.")
+        print(
+            "setuptools not found. Run 'pip install setuptools' to enable package installation."
+        )
 
 
 if __name__ == "__main__":
