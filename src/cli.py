@@ -40,12 +40,6 @@ def parse_args():
     parser.add_argument(
         "n", type=int, help="Number of commits to include in the changelog."
     )
-    parser.add_argument(
-        "--format",
-        choices=["markdown", "text"],
-        default="markdown",
-        help="Output format for the changelog. Default is markdown.",
-    )
     return parser.parse_args()
 
 
