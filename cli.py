@@ -16,7 +16,7 @@ import requests
 
 # Claude API credentials and endpoint
 CLAUDE_API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRqZ3VycmFtQGdtYWlsLmNvbSIsImFzc2Vzc21lbnQiOiJhaSIsImNyZWF0ZWRfYXQiOiIyMDI1LTAzLTE5VDAxOjU3OjM3LjAzNjI5ODA3NVoiLCJpYXQiOjE3NDIzNDk0NTd9.fgjvGkXDqiExxbBcZmeZm-XjT0kjZScfZN7HQ_1A-ZI"
-API_PROXY = "https://mintlify-take-home.com/api/message"
+ANTHROPIC_PROXY = "https://mintlify-take-home.com/api/message"
 
 def parse_args():
     """Parse command line arguments."""
@@ -81,6 +81,7 @@ def get_git_commits(n):
 def generate_changelog_with_claude(commits):
     """Generate a changelog using the Claude API."""
     # Create a prompt for Claude
+
     commit_details = "\n\n".join([
         f"Commit: {commit['hash']}\n"
         f"Author: {commit['author']}\n"
@@ -92,19 +93,58 @@ def generate_changelog_with_claude(commits):
     
     prompt = f"""
             ### INSTRUCTIONS ###
-            Based on the following git commits, generate a user-friendly changelog that summarizes the changes in a way that would be meaningful to end-users. 
+            Create a professional changelog based on the git commits below. Your task is to analyze these commits and produce a well-organized, user-friendly changelog that follows the style of leading tech companies like Mintlify and Vercel.
 
-            The changelog should be similar in style to changelogs found on popular company websites like Vercel, Stripe, etc.
+            ### REQUIREMENTS ###
+            1. Start with a clear heading that includes the month and year (e.g., "March 2025")
+            2. Group changes into relevant categories such as:
+               - New Features
+               - Improvements
+               - Bug Fixes
+               - Performance
+               - Documentation
+            3. Write concise, clear descriptions that explain the value to users
+            4. Use consistent formatting throughout
+            5. Prioritize user-facing changes over technical implementation details
+            6. For important features, include a brief one-sentence description below the main bullet point
 
-            Group related changes together under appropriate headings.
-
-            Focus on user-facing changes rather than implementation details unless they're significant.
-
+            ### FORMAT SPECIFICATIONS ###
+            - Use clean, professional Markdown formatting without emojis
+            - Use ## for category headings
+            - Use bullet points with clear, concise descriptions
+            - Bold key terms or feature names for emphasis
+            - Keep descriptions brief but informative
+            - For major features, include a "Learn more" link placeholder
+            
             ### COMMIT DETAILS ###
             {commit_details}
+            
+            ### OUTPUT EXAMPLE ###
+            ```markdown
+            # March 2025
 
-            ### OUTPUT FORMAT ###
-            The output should be in markdown (.md) format.
+            ## New Configuration Schema `docs.json`
+
+            We've introduced a new `docs.json` schema as a replacement for `mint.json`, to support better multi-level versioning, easier visual comprehension, and more consistent terminology.
+
+            Upgrade from `mint.json` to `docs.json` with the following steps:
+            1. Make sure your CLI is the latest version
+            2. In your docs repository, run the upgrade command
+            3. Delete your old mint.json file and push your changes
+
+            ## API Improvements
+
+            * **Enhanced Performance** - API calls are now 30% faster with improved caching
+            * **New Endpoints** - Added support for additional data types and formats
+            * Fixed intermittent timeout issues when processing large requests
+
+            ## Quality Improvements
+
+            * Support for requiring authentication to access preview deployments
+            * Improved mobile responsiveness across all documentation pages
+            ```
+            
+            Your changelog should follow this style but with appropriate content based on the commit details provided.
             """
 
     # Prepare the API request
@@ -128,7 +168,7 @@ def generate_changelog_with_claude(commits):
     }
     
     try:
-        response = requests.post(API_PROXY, json=payload, headers=headers, timeout=10)
+        response = requests.post(ANTHROPIC_PROXY, json=payload, headers=headers, timeout=10)
         
         # Don't raise_for_status yet so we can see the error response
         if response.status_code >= 400:
