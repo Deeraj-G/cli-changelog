@@ -13,6 +13,8 @@ import subprocess
 import argparse
 import requests
 
+from setuptools import setup
+
 
 # Claude API credentials and endpoint
 CLAUDE_API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRqZ3VycmFtQGdtYWlsLmNvbSIsImFzc2Vzc21lbnQiOiJhaSIsImNyZWF0ZWRfYXQiOiIyMDI1LTAzLTE5VDAxOjU3OjM3LjAzNjI5ODA3NVoiLCJpYXQiOjE3NDIzNDk0NTd9.fgjvGkXDqiExxbBcZmeZm-XjT0kjZScfZN7HQ_1A-ZI"
@@ -245,7 +247,31 @@ def main():
     print("\n===== CHANGELOG =====\n")
     print(changelog)
 
+
+def setup_package():
+    """Set up the package for installation."""
+    try:
+        
+        setup(
+            name="git-changelog",
+            version="0.1.0",
+            description="Generate changelogs from git commits using Claude AI",
+            py_modules=["cli"],
+            entry_points={
+                "console_scripts": [
+                    "git-changelog=cli:main",
+                ],
+            },
+            install_requires=[
+                "requests>=2.25.0",
+            ],
+        )
+    except ImportError:
+        print("setuptools not found. Run 'pip install setuptools' to enable package installation.")
+
+
 if __name__ == "__main__":
-    main()
-
-
+    if len(sys.argv) > 1 and sys.argv[1] == "install":
+        setup_package()
+    else:
+        main()
