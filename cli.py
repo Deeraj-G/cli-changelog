@@ -128,44 +128,29 @@ def generate_changelog_with_claude(commits):
             ### INSTRUCTIONS ###
             Create a professional changelog based on the git commits below. Your task is to analyze these commits and produce a well-organized, user-friendly changelog that follows the style of leading tech companies like Mintlify and Vercel.
 
-            ### KEY CHALLENGES ###
-            - You will receive potentially many small, incremental commits
+            ### KEY POINTS ###
+            - Consolidate similar/small commits; skip trivial changes
+            - Translate technical details into user benefits
+            - Use clear categories and consistent formatting
+            - Include month/year heading and descriptive section headings
             - Some commits may be trivial (typo fixes, minor adjustments) and should be aggregated
-            - Technical implementation details should be translated into user benefits
             - Similar changes across multiple commits should be consolidated
 
-            ### REQUIREMENTS ###
-            1. Start with a clear heading that includes the month and year (e.g., "March 2025")
-            2. Group changes into relevant categories such as:
-               - New Features
-               - Improvements
-               - API Improvements
-               - Bug Fixes
-               - Performance
-               - Documentation
-            3. Write concise, clear descriptions that explain the value to users
-            4. Use consistent formatting throughout
-            5. Prioritize user-facing changes over technical implementation details
-            6. For important features, include a brief one-sentence description below the main bullet point
+            ### FORMAT ###
+            - Clean Markdown without emojis
+            - ## for category headings (New Features, Improvements, Bug Fixes, etc.)
+            - Bullet points with **bold** feature names
+            - Brief descriptions focused on user value
+            - Include step-by-step guides for major features
 
-            ### FORMAT SPECIFICATIONS ###
-            - Use clean, professional Markdown formatting without emojis
-            - Use ## for category headings
-            - Use bullet points with clear, concise descriptions
-            - Bold key terms or feature names for emphasis
-            - Keep descriptions brief but informative
-            - For major features, include a brief description of user benefits
-            
             ### RESPONSE FORMAT ###
-            IMPORTANT: Your response must ONLY contain the raw markdown content with no additional commentary, introduction, or explanation.
-            Do not include phrases like "Here's the changelog" or "Based on the commits provided".
-            Do not wrap the content in markdown code blocks.
-            The first line of your response should be the main heading (e.g., "# March 2025") and nothing else before it.
+            IMPORTANT: Provide ONLY raw markdown with no commentary or code blocks.
+            Start directly with "# Month Year" heading.
             
             ### COMMIT DETAILS ###
             {commit_details}
             
-            ### OUTPUT EXAMPLE ###
+            ### EXAMPLE OUTPUT ###
             # March 2025
 
             ## New Configuration Schema
