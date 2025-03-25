@@ -177,23 +177,20 @@ def generate_changelog_with_claude(commits):
             Create a professional changelog based on the git commits below. Your task is to analyze these commits and produce a well-organized, user-friendly changelog that follows the style of leading tech companies like Stripe and Vercel.
 
             ### KEY POINTS ###
-            - Consolidate similar/small commits; skip trivial changes
+            - Include month/year heading and descriptive section headings
             - Translate technical details into user benefits
             - Use clear categories and consistent formatting
-            - Include month/year heading and descriptive section headings
+            - Consolidate similar/small across multiple commits; skip trivial changes
             - Some commits may be trivial (typo fixes, minor adjustments) and should be aggregated
-            - Similar changes across multiple commits should be consolidated
 
-            ### FORMAT ###
+            ### RESPONSE FORMAT ###
             - Clean Markdown without emojis
             - ## for category headings (New Features, Improvements, Bug Fixes, etc.)
             - Bullet points with **bold** feature names
             - Brief descriptions focused on user value
             - Include step-by-step guides for major features
-
-            ### RESPONSE FORMAT ###
-            IMPORTANT: Provide ONLY raw markdown with no commentary or code blocks.
-            Start directly with "# Month Year" heading.
+            - IMPORTANT: Provide ONLY raw markdown with no commentary or code blocks.
+            - Start directly with "# Month Year" heading.
             
             ### COMMIT DETAILS ###
             {commit_details}
@@ -277,6 +274,7 @@ def main():
     """Main function to run the CLI application."""
     args = parse_args()
 
+    # Validate the output file extension
     if args.output:
         if ".md" not in args.output:
             print("Error: Invalid output file extension. Must be .md")
