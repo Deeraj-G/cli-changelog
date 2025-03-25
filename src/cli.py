@@ -296,20 +296,14 @@ def main():
     # Generate the changelog
     changelog = generate_changelog_with_claude(commits)
 
-    print("\n===== CHANGELOG =====\n")
-    print(changelog)
-    print("\n===== END OF CHANGELOG =====\n")
-
-    # Write the changelog to a file
+    # Write the changelog to a file if `--output` is provided
     if args.output:
-        if ".md" in args.output:
-            with open(args.output, "w", encoding="utf-8") as f:
-                f.write(changelog)
-        else:
-            print("Error: Invalid output file extension. Must be .md")
-            sys.exit(1)
+        with open(args.output, "w", encoding="utf-8") as f:
+            f.write(changelog)
     else:
+        print("\n===== CHANGELOG =====\n")
         print(changelog)
+        print("\n===== END OF CHANGELOG =====\n")
 
 
 def setup_package():
