@@ -16,12 +16,12 @@ Examples:
 
 import argparse
 import json
+import os
 import subprocess
 import sys
-import os
-from dotenv import load_dotenv
 
 import requests
+from dotenv import load_dotenv
 from setuptools import setup
 
 # Load environment variables from .env file
@@ -312,10 +312,10 @@ def setup_package():
                 "Operating System :: OS Independent",
             ],
             # Include the .env file in the package
-            data_files=[('.', ['.env'])],
+            data_files=[(".", [".env"])],
             # Alternative approach using package_data
             package_data={
-                '': ['.env'],
+                "": [".env"],
             },
         )
         print(
