@@ -27,9 +27,9 @@ from setuptools import setup
 # Load environment variables from .env file
 load_dotenv()
 
-# Claude API credentials and endpoint
-CLAUDE_API_KEY = os.getenv("CLAUDE_API_KEY")
-ANTHROPIC_PROXY = os.getenv("ANTHROPIC_PROXY")
+# Anthropic API credentials and endpoint
+ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
+ANTHROPIC_PROXY = os.getenv("ANTHROPIC_PROXY", "https://api.anthropic.com/v1/messages")
 
 
 def parse_args():
@@ -39,6 +39,11 @@ def parse_args():
     )
     parser.add_argument(
         "n", type=int, help="Number of commits to include in the changelog."
+    )
+    parser.add_argument(
+        "--output",
+        type=str,
+        help="Output .md file name, defaults to stdout when not provided",
     )
     return parser.parse_args()
 
@@ -169,7 +174,7 @@ def generate_changelog_with_claude(commits):
 
     prompt = f"""
             ### INSTRUCTIONS ###
-            Create a professional changelog based on the git commits below. Your task is to analyze these commits and produce a well-organized, user-friendly changelog that follows the style of leading tech companies like Mintlify and Vercel.
+            Create a professional changelog based on the git commits below. Your task is to analyze these commits and produce a well-organized, user-friendly changelog that follows the style of leading tech companies like Stripe and Vercel.
 
             ### KEY POINTS ###
             - Consolidate similar/small commits; skip trivial changes
@@ -222,7 +227,7 @@ def generate_changelog_with_claude(commits):
 
     # Prepare the API request
     headers = {
-        "x-api-key": CLAUDE_API_KEY,
+        "x-api-key": ANTHROPIC_API_KEY,
         "anthropic-version": "2023-06-01",
         "content-type": "application/json",
     }
@@ -272,6 +277,11 @@ def main():
     """Main function to run the CLI application."""
     args = parse_args()
 
+    if args.output:
+        if ".md" not in args.output:
+            print("Error: Invalid output file extension. Must be .md")
+            sys.exit(1)
+
     print(f"Fetching the last {args.n} commits...")
     commits = get_git_commits(args.n)
 
@@ -280,11 +290,26 @@ def main():
         sys.exit(0)
 
     print(f"Found {len(commits)} commits. Generating changelog...")
+
+    # Preprocess commits to filter out trivial changes and group similar commits
     commits = preprocess_commits(commits, args.n)
+    # Generate the changelog
     changelog = generate_changelog_with_claude(commits)
 
     print("\n===== CHANGELOG =====\n")
     print(changelog)
+    print("\n===== END OF CHANGELOG =====\n")
+
+    # Write the changelog to a file
+    if args.output:
+        if ".md" in args.output:
+            with open(args.output, "w", encoding="utf-8") as f:
+                f.write(changelog)
+        else:
+            print("Error: Invalid output file extension. Must be .md")
+            sys.exit(1)
+    else:
+        print(changelog)
 
 
 def setup_package():
